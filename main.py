@@ -4,6 +4,19 @@ from flask import Flask, render_template, flash, redirect, url_for, session, log
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
+from functools import wraps
+
+# decorator giriş
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "logged_in" in session:
+            return f(*args, **kwargs)
+        else:
+            flash("Bu sayfayı görüntülemek için lütfen giriş yapın!","danger")
+            return redirect(url_for("login"))
+    return decorated_function
 
 # KULLANICI KAYIT FORMU
 
@@ -83,6 +96,10 @@ def login():
             real_password = data["password"]
             if sha256_crypt.verify(password_entered,real_password):
                 flash("Başarıyla giriş yaptınız!","success")
+                session["logged_in"] = True
+                session["username"] = username
+                session["email"] = data["email"]
+                session["name"] = data["name"]
                 return redirect(url_for("index"))
             else:
                 flash("Kullanıcı adı veya parolanızı yanlış girdiniz!","danger")
@@ -93,10 +110,21 @@ def login():
     else:
         return render_template("login.html",form = form)
 
+# logout işlemi
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template("/dashboard.html")
+
 @app.route("/ads/<string:id>")
 
 def detail(id):
     return "Article Id:" + id
- 
+
 if __name__ == "__main__":
     app.run(debug=True)
