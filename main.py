@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, flash, redirect, url_for, session, logging, request
 from flask_mysqldb import MySQL
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators
+from wtforms import Form, StringField, TextAreaField, PasswordField, IntegerField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
 
@@ -97,6 +97,7 @@ def login():
             if sha256_crypt.verify(password_entered,real_password):
                 flash("Başarıyla giriş yaptınız!","success")
                 session["logged_in"] = True
+                session["id"] = data["id"]
                 session["username"] = username
                 session["email"] = data["email"]
                 session["name"] = data["name"]
@@ -115,11 +116,34 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for("index"))
-
+ 
+# DASHBOARD
 @app.route("/dashboard")
 @login_required
 def dashboard():
     return render_template("/dashboard.html")
+
+# İLAN EKLEME
+@app.route("/add",methods=["GET","POST"])
+@login_required
+def add():
+    form = AddEkleme(request.form)
+
+
+
+    return render_template("/add.html",form=form)
+
+# İLAN EKLEME FORM
+
+class AddEkleme(Form):
+    title = StringField("İlan Başlığı",validators=[validators.Length(min=5,max=100)])
+    city = StringField("Şehir")
+    brand = StringField("Marka")
+    model = StringField("Model")
+    year = IntegerField("Yıl")
+    context = TextAreaField("Açıklama")
+    price = IntegerField("Fiyat")
+    
 
 @app.route("/ads/<string:id>")
 
