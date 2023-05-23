@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h3 class="text-center">İlanlar</h3>
+<hr>
+{% if ads %}
+<ul class="list-group">
+    {% for ad in ads %}
+    <li class="list-group-item">{{ad.title}}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="alert alert-danger">Henüz sitede ilan bulunmamaktadır.</div>
+{% endif %}
+
+{% endblock  %}

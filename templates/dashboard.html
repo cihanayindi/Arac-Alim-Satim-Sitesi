@@ -10,6 +10,44 @@
     <p>Adınız: {{session["name"]}}</p>
     <p>Mail adresiniz: {{session["email"]}}</p>
     <hr>
+
+    <h3>İlanlarınız</h3>
+    {% if ads %}
+    <table class="table table-hover">
+    <thead>
+        <tr>
+        <th scope="col">#</th>
+        <th scope="col">İlan No</th>
+        <th scope="col">Başlık</th>
+        <th scope="col">Oluşturma Tarihi</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ad in ads %}
+            <tr>
+            <th scope="row"></th>
+            <td>{{ad.id}}</td>
+            <td>{{ad.title}}</td>
+            <td>{{ad.created_date}}</td>
+            <td><a href="">Güncelle</a></td>
+            <td><a href="">Sil</a></td>
+
+            </tr>
+        {% endfor %}
+        <!--<tr>
+        <th scope="row">3</th>
+        <td colspan="2">Larry the Bird</td>
+        <td>@twitter</td>
+        </tr> -->
+    </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-danger">Henüz ilanınız bulunmamaktadır.</div>
+    {% endif %}
+    <hr>
+
     <a href="/add" class="btn btn-success">İlan Ekleme</a>
 </div>
 {% endblock  %}

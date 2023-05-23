@@ -121,16 +121,37 @@ def logout():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("/dashboard.html")
+    cursor = mysql.connection.cursor()
+    sorgu = "SELECT * FROM ads WHERE author_id = %s"
+    result = cursor.execute(sorgu,(session["id"],))
+
+    if result>0:
+        ads = cursor.fetchall()
+        return render_template("/dashboard.html",ads=ads)
+    else:
+        return render_template("/dashboard.html")
 
 # İLAN EKLEME
 @app.route("/add",methods=["GET","POST"])
 @login_required
 def add():
     form = AddEkleme(request.form)
+    if request.method == "POST" and form.validate():
+        title = form.title.data
+        city = form.city.data
+        brand = form.brand.data
+        model = form.model.data
+        year = form.year.data
+        context = form.context.data
+        price = form.price.data
 
-
-
+        cursor = mysql.connection.cursor()
+        sorgu = "INSERT INTO ads(author,author_id,title,city,brand,model,year,context,price) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sorgu,(session["name"],session["id"],title,city,brand,model,year,context,price))
+        mysql.connection.commit()
+        cursor.close()
+        flash("İlan Başarıyla Eklendi!","success")
+        return redirect(url_for("dashboard"))
     return render_template("/add.html",form=form)
 
 # İLAN EKLEME FORM
@@ -145,8 +166,18 @@ class AddEkleme(Form):
     price = IntegerField("Fiyat")
     
 
-@app.route("/ads/<string:id>")
+@app.route("/ads")
+def ads():
+    cursor = mysql.connection.cursor()
+    sorgu = "SELECT * FROM ads"
+    result = cursor.execute(sorgu)
 
+    if result > 0:
+        ads = cursor.fetchall()
+        return render_template("ads.html",ads=ads)
+    else:
+        return render_template("ads.html")
+    
 def detail(id):
     return "Article Id:" + id
 
