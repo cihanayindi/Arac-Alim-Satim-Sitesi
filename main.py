@@ -6,8 +6,18 @@ from wtforms import Form, StringField, TextAreaField, PasswordField, IntegerFiel
 from passlib.hash import sha256_crypt
 from functools import wraps
 
-# decorator giriş
+app = Flask(__name__)
+app.secret_key = "aracalsat"
 
+app.config["MYSQL_HOST"] = "localhost"
+app.config["MYSQL_USER"] = "root"
+app.config["MYSQL_PASSWORD"] = ""
+app.config["MYSQL_DB"] = "aracalsat"
+app.config["MYSQL_CURSORCLASS"] = "DictCursor"
+
+mysql = MySQL(app)
+
+# decorator giriş
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -19,7 +29,6 @@ def login_required(f):
     return decorated_function
 
 # KULLANICI KAYIT FORMU
-
 class RegisterForm(Form):
     name = StringField("İsim Soyisim", validators=[validators.Length(min=4, max=25)])
     username = StringField("Kullanıcı Adı", validators=[validators.Length(min=5, max=35), validators.DataRequired(message="Lütfen kullanıcı adınızı girin!")])
@@ -34,29 +43,13 @@ class LoginForm(Form):
     username = StringField("Kullanıcı Adı")
     password = PasswordField("Şifre")
 
-
-app = Flask(__name__)
-app.secret_key = "aracalsat"
-
-app.config["MYSQL_HOST"] = "localhost"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = ""
-app.config["MYSQL_DB"] = "aracalsat"
-app.config["MYSQL_CURSORCLASS"] = "DictCursor"
-
-mysql = MySQL(app)
-
 # Anasayfa 
-
 @app.route("/")
-
 def index():
     return render_template("index.html")
 
 # Kayıt olma 
-
 @app.route("/register",methods = ["GET","POST"])
-
 def register():
     form = RegisterForm(request.form)
 
@@ -268,5 +261,31 @@ def search():
         else:
             ads = cursor.fetchall()
             return render_template("ads.html",ads=ads)
+        
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/addfavorite/<string:id>")
+@login_required
+def addfavorite(id):
+    cursor = mysql.connection.cursor()
+    sorgu = "SELECT * FROM ads WHERE author=%s and id=%s"
+    result = cursor.execute(sorgu,(session["name"],id))
+
+    if result != 0:
+        flash("Bu ilan zaten sizin olduğu için favoriye ekleyemezsiniz!","warning")
+        return redirect(url_for("dashboard"))
+    
+    else:
+        data = cursor.fetchone()
+        
+        sorgu2 = "UPDATE users SET favorites=%s WHERE id=%s"
+        cursor.execute(sorgu2,(id,session["id"]))
+        mysql.connection.commit()
+        cursor.close()
+        flash("İlan başarıyla favoriye eklendi!","success")
+        return redirect(url_for("dashboard"))
+
 if __name__ == "__main__":
     app.run(debug=True)

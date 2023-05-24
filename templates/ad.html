@@ -5,10 +5,45 @@
 {% if ad %}
 <h4 class="text-center">{{ad.title}}</h4>
 <hr>
+<table class="table table-hover">
+    <thead>
+        <tr>
+        <th scope="col">#</th>
+        <th scope="col">İlan Sahibi</th>
+        <th scope="col">Şehir</th>
+        <th scope="col">Marka</th>
+        <th scope="col">Model</th>
+        <th scope="col">Yıl</th>
+        <th scope="col">Fiyat</th>
+        <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        <tr>
+        <th scope="row"></th>
+        <td>{{ad.author}}</td>
+        <td>{{ad.city}}</td>
+        <td>{{ad.brand}}</td>
+        <td>{{ad.model}}</td>
+        <td>{{ad.year}}</td>
+        <td>{{ad.price}}</td>
+        <td><a href="/addfavorite/{{ad.id}}" class="btn btn-success">Favorilere Ekle</a></td>
+        </tr>
+        
+        <!--<tr>
+        <th scope="row">3</th>
+        <td colspan="2">Larry the Bird</td>
+        <td>@twitter</td>
+        </tr> -->
+    </tbody>
+    </table>
+<!--<hr>
 <div class="text-center">
 İlan Sahibi : {{ad.author}} <br>
-Oluşturma Tarihi : {{ad.created_date}}
+Oluşturma Tarihi : {{ad.created_date}}-->
 <hr>
+<div class="text-center">
 {{ad.context|safe}}
 </div>
 {% else %}
