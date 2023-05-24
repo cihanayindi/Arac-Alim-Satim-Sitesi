@@ -1,15 +1,25 @@
 {% extends "layout.html" %}
 
 {% block body %}
+{% if ads and request.method == "GET"%}
 <h3 class="text-center">İlanlar</h3>
 <hr>
-{% if ads %}
 <ul class="list-group">
     {% for ad in ads %}
-    <li class="list-group-item">{{ad.title}}</li>
+    <li class="list-group-item"><a href="/ad/{{ad.id}}">{{ad.title}}</a></li>
+    {% endfor %}
+</ul>
+{% elif ads and request.method == "POST" %}
+<h3 class="text-center">{{ ads|length }} adet ilan bulundu!</h3>
+<hr>
+<ul class="list-group">
+    {% for ad in ads %}
+    <li class="list-group-item"><a href="/ad/{{ad.id}}">{{ad.title}}</a></li>
     {% endfor %}
 </ul>
 {% else %}
+<h3 class="text-center">İlanlar</h3>
+<hr>
 <div class="alert alert-danger">Henüz sitede ilan bulunmamaktadır.</div>
 {% endif %}
 

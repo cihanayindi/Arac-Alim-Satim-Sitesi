@@ -178,8 +178,95 @@ def ads():
     else:
         return render_template("ads.html")
     
-def detail(id):
-    return "Article Id:" + id
+# İlan detayı sayfası
 
+@app.route("/ad/<string:id>")
+def ad(id):
+    cursor = mysql.connection.cursor()
+    sorgu = "SELECT * FROM ads WHERE id=%s"
+    result = cursor.execute(sorgu,(id,))
+    
+    if result > 0:
+        ad = cursor.fetchone()
+        return render_template("ad.html",ad=ad)
+    else:
+        return render_template("ad.html")
+
+# İlan silme
+
+@app.route("/delete/<string:id>")
+@login_required
+def delete(id):
+    cursor = mysql.connection.cursor()
+    sorgu = "SELECT * FROM ads WHERE author=%s and id=%s"
+    result = cursor.execute(sorgu,(session["name"],id))
+
+    if result>0:
+        sorgu2 = "DELETE FROM ads WHERE id=%s"
+        cursor.execute(sorgu2,(id,))
+        mysql.connection.commit()
+        flash("İlan silindi!","success")
+        return redirect(url_for("dashboard"))
+    else:
+        flash("Böyle bir ilan yok veya bu işleme yetkiniz yok!","danger")
+        return redirect(url_for("index"))
+    
+# İLAN GÜNCELLEME
+
+@app.route("/edit/<string:id>",methods=["GET","POST"])
+@login_required
+def update(id):
+    if request.method == "GET":
+        cursor = mysql.connection.cursor()
+        sorgu = "SELECT * FROM ads WHERE  id=%s and author=%s"
+        result = cursor.execute(sorgu,(id,session["name"]))
+        if result==0:
+            flash("Böyle bir ilan yok veya bu işleme yetkiniz yok!","danger")
+            return redirect(url_for("index"))
+        else:
+            ad = cursor.fetchone()
+            form = AddEkleme()
+            form.title.data = ad["title"]
+            form.city.data = ad["city"]
+            form.brand.data = ad["brand"]
+            form.model.data = ad["model"]
+            form.year.data = ad["year"]
+            form.context.data = ad["context"]
+            form.price.data = ad["price"]
+
+            return render_template("update.html",form=form)
+    else: # post request
+        form = AddEkleme(request.form)
+        newTitle = form.title.data
+        newCity = form.city.data
+        newBrand = form.brand.data
+        newModel = form.model.data
+        newYear = form.year.data
+        newContext = form.context.data
+        newPrice = form.price.data
+
+        sorgu2 = "UPDATE ads SET title=%s,city=%s,brand=%s,model=%s,year=%s,context=%s,price=%s WHERE id=%s"
+        cursor = mysql.connection.cursor()
+        cursor.execute(sorgu2,(newTitle,newCity,newBrand,newModel,newYear,newContext,newPrice,id))
+        mysql.connection.commit()
+        flash("İlan başarıyla güncellendi!","success")
+        return redirect(url_for("dashboard"))
+
+# ARAMA KISMI
+@app.route("/search",methods=["GET","POST"])
+def search():
+    if request.method == "GET":
+        return redirect(url_for("index"))
+    else:
+        keyword = request.form.get("keyword")
+        cursor = mysql.connection.cursor()
+        sorgu = "SELECT * FROM ads WHERE title LIKE '%"+ keyword +"%'"
+        result = cursor.execute(sorgu)
+        if result == 0:
+            flash("Aranan kelimeye uygun ilan yok!","warning")
+            return redirect(url_for("ads"))
+        else:
+            ads = cursor.fetchall()
+            return render_template("ads.html",ads=ads)
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% if ad %}
+<h4 class="text-center">{{ad.title}}</h4>
+<hr>
+<div class="text-center">
+İlan Sahibi : {{ad.author}} <br>
+Oluşturma Tarihi : {{ad.created_date}}
+<hr>
+{{ad.context|safe}}
+</div>
+{% else %}
+
+<div class = "alert alert-warning text-center">
+    Böyle bir ilan bulunmamaktadır.
+</div>
+
+{% endif %}
+
+{% endblock  %}
