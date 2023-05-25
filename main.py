@@ -1,10 +1,11 @@
 # KÜTÜPHANELER
 
-from flask import Flask, render_template, flash, redirect, url_for, session, logging, request
+from flask import Flask, render_template, flash, redirect, url_for, session, logging, request,make_response
 from flask_mysqldb import MySQL
-from wtforms import Form, StringField, TextAreaField, PasswordField, IntegerField, validators
+from wtforms import Form, StringField, TextAreaField, FileField,PasswordField, IntegerField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "aracalsat"
@@ -120,7 +121,23 @@ def dashboard():
 
     if result>0:
         ads = cursor.fetchall()
-        return render_template("/dashboard.html",ads=ads)
+        sorgu2 = "SELECT favorites FROM users WHERE id=%s"
+        cursor.execute(sorgu2,(session["id"],))
+        data = cursor.fetchone()
+        
+        if data["favorites"] != "":
+            favoritesId = (data["favorites"]).split()
+            sql_sorgusu = "SELECT * FROM ads WHERE id IN ("
+            for i, id in enumerate(favoritesId):
+                if i != 0:
+                    sql_sorgusu += ","
+                sql_sorgusu += str(id)
+            sql_sorgusu += ");"
+            cursor.execute(sql_sorgusu)
+            favorites = cursor.fetchall()
+            return render_template("/dashboard.html",ads=ads,favorites=favorites)
+        else:
+            return render_template("/dashboard.html",ads=ads)
     else:
         return render_template("/dashboard.html")
 
@@ -137,6 +154,8 @@ def add():
         year = form.year.data
         context = form.context.data
         price = form.price.data
+        images = form.images.data
+        print(images)
 
         cursor = mysql.connection.cursor()
         sorgu = "INSERT INTO ads(author,author_id,title,city,brand,model,year,context,price) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -157,6 +176,7 @@ class AddEkleme(Form):
     year = IntegerField("Yıl")
     context = TextAreaField("Açıklama")
     price = IntegerField("Fiyat")
+    images = FileField("Fotoğraf Ekleyin")
     
 
 @app.route("/ads")
@@ -266,25 +286,63 @@ def search():
 def about():
     return render_template("about.html")
 
+# FAVORİ İLAN EKLEME
+
 @app.route("/addfavorite/<string:id>")
 @login_required
 def addfavorite(id):
     cursor = mysql.connection.cursor()
-    sorgu = "SELECT * FROM ads WHERE author=%s and id=%s"
+    sorgu = "SELECT * FROM ads WHERE author!=%s and id=%s"
     result = cursor.execute(sorgu,(session["name"],id))
 
-    if result != 0:
+    if result == 0:
         flash("Bu ilan zaten sizin olduğu için favoriye ekleyemezsiniz!","warning")
         return redirect(url_for("dashboard"))
     
     else:
-        data = cursor.fetchone()
+        FavoriSorgusu = "SELECT favorites FROM users WHERE id=%s"
+        cursor.execute(FavoriSorgusu,(session["id"],))
+        favorites = cursor.fetchone()
+        favorites = favorites["favorites"] # "3 4" 
+        favorites = favorites.split(" ") # [3,4]
+        if id in favorites:
+            flash("Bu ilanı zaten daha önce favoriye eklediniz!","warning")
+            return redirect(url_for("dashboard"))
+        else:
+            favorites.append(id)
+            favorites = " ".join(favorites)
+
+            FavoriEkleSorgusu = "UPDATE users SET favorites=%s WHERE id=%s"
+            cursor.execute(FavoriEkleSorgusu,(favorites,session["id"]))
+            mysql.connection.commit()
+            cursor.close()
+            flash("İlan Başarıyla Favorilerinize Eklendi!","success") 
+            return redirect(url_for("dashboard"))
         
-        sorgu2 = "UPDATE users SET favorites=%s WHERE id=%s"
-        cursor.execute(sorgu2,(id,session["id"]))
+# FAVORİLERDEN KALDIR
+@app.route("/delfromfav/<string:id>")
+@login_required
+def delfromfav(id):
+    cursor = mysql.connection.cursor()
+    sorgu = "SELECT favorites FROM users WHERE id=%s"
+    cursor.execute(sorgu,(session["id"],))
+    favorites = cursor.fetchone()
+    
+    favorites = favorites["favorites"].split()
+
+    if id not in favorites:
+        flash("Bu ilan favori ilanlarınızdan birisi değil!","warning")
+        return redirect(url_for("dashboard"))
+    else:
+        favorites.remove(id)
+
+        favorites = " ".join(favorites)
+
+        FavoriEkleSorgusu = "UPDATE users SET favorites=%s WHERE id=%s"
+        cursor.execute(FavoriEkleSorgusu,(favorites,session["id"]))
         mysql.connection.commit()
         cursor.close()
-        flash("İlan başarıyla favoriye eklendi!","success")
+        flash("İlan Başarıyla Favorilerinizden Kaldırıldı!","success") 
         return redirect(url_for("dashboard"))
 
 if __name__ == "__main__":

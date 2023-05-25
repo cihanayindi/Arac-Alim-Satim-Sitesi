@@ -16,7 +16,7 @@
     <table class="table table-hover">
     <thead>
         <tr>
-        <th scope="col">#</th>
+        
         <th scope="col">İlan No</th>
         <th scope="col">Başlık</th>
         <th scope="col">Oluşturma Tarihi</th>
@@ -27,8 +27,8 @@
     <tbody>
         {% for ad in ads %}
             <tr>
-            <th scope="row"></th>
-            <td>{{ad.id}}</td>
+            
+            <td><a href="/ad/{{ad.id}}">#{{ad.id}}</a></td>
             <td><a href="/ad/{{ad.id}}">{{ad.title}}</a></td>
             <td>{{ad.created_date}}</td>
             <td><a href="/edit/{{ad.id}}" class="btn btn-danger">Güncelle</a></td>
@@ -46,8 +46,46 @@
     {% else %}
     <div class="alert alert-danger">Henüz ilanınız bulunmamaktadır.</div>
     {% endif %}
-    <hr>
+    <hr> <br>
+    <h3>Favori İlanlarınız</h3>
+    {% if favorites %}
+    <table class="table table-hover">
+    <thead>
+        <tr>
+        <th scope="col">İlan No</th>
+        <th scope="col">İlan Başlığı</th>
+        <th scope="col">İlan Sahibi</th>
+        <th scope="col">Şehir</th>
+        <th scope="col">Marka</th>
+        <th scope="col">Model</th>
+        <th scope="col">Yıl</th>
+        <th scope="col">Fiyat</th>
+        <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ad in favorites %}
+        <tr>
+        <td><a href="/ad/{{ad.id}}">#{{ad.id}}</a></td>
+        <td ><a href="/ad/{{ad.id}}">{{ad.title}}</a></td>
+        <td>{{ad.author}}</td>
+        <td>{{ad.city}}</td>
+        <td>{{ad.brand}}</td>
+        <td>{{ad.model}}</td>
+        <td>{{ad.year}}</td>
+        <td>{{ad.price}}</td>
+        <td><a href="/delfromfav/{{ad.id}}" class="btn btn-danger">Favorilerden Kaldır</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-danger">Henüz favori ilanınız bulunmamaktadır.</div>
+    {% endif %}
 
+
+
+    <hr>
     <a href="/add" class="btn btn-success">İlan Ekleme</a>
 </div>
 {% endblock  %}
