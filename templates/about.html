@@ -2,11 +2,10 @@
 
 {% block body %}
 <div class="text-center">
-<h1>Hakkımızda</h1>
+<h2>Hoş Geldiniz!</h2>
 <hr>
-<p>
-Hoş Geldiniz!
-<br><br>
+<p style="font-size:1.20rem;">
+<br>
 Araç Alım Satımı olarak, müşterilerimize güvenilir ve kullanıcı dostu bir platform sunmaktan gurur duyuyoruz. Misyonumuz, araç alıcıları ve satıcıları arasında güvenilir bir bağlantı oluşturarak, en iyi araçlara erişimi kolaylaştırmaktır.
 <br><br>
 Ekibimiz, otomobil endüstrisinde geniş deneyime sahip uzmanlardan oluşur. Araç alım satım sürecinin karmaşıklıklarını anlıyoruz ve müşterilerimizin güvenli ve sorunsuz bir deneyim yaşamasını sağlamak için çalışıyoruz. Sitemizde yer alan araçlar, titizlikle seçilmiş ve kalite standartlarına uygun olarak değerlendirilmiştir. Müşterilerimize en iyi araçları sunmak için çeşitli markalar, modeller ve fiyat aralıklarında geniş bir seçenek sunmaktayız.
@@ -21,7 +20,7 @@ Araç Alım Satımı olarak, sizin için mükemmel bir aracı bulmanıza yardım
 {% if session["logged_in"] %}
 
 {% else %}
-<button type="button" class="btn btn-primary">Hemen Kayıt Olun!</button>
+<button type="button" class="btn btn-success">Hemen Kayıt Olun!</button>
 {% endif %}
 
 </div>

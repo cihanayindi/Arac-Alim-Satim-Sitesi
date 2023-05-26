@@ -1,12 +1,11 @@
 {% include "layout.html" %}
 
 {% block body %}
-    <div class="jumbotron text-center">
-        <h3>Araç Alım-Satım Sitesine Hoşgeldiniz!</h3>
+    <div class="jumbotron text-center" style="margin-top:15%;">
+        <h4>Araç Alım-Satım Sitesine Hoş Geldiniz!</h4>
         <p>Bu site Adnan Menderes Üniversitesi CSE-206 dersi için final ödevi olarak hazırlanmıştır.</p>
         {% if session["logged_in"] %}
-            <p>İyi günler {{session["username"]}}!</p>
-            
+            <h3 style="text-transform: uppercase;">İyİ günler {{session["username"]}}!</h3>
 
         {% else %}
         {% endif %}

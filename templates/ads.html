@@ -6,7 +6,7 @@
 <hr>
 <ul class="list-group">
     {% for ad in ads %}
-    <li class="list-group-item"><a href="/ad/{{ad.id}}">{{ad.title}}</a></li>
+    <li class="list-group-item"><a href="/ad/{{ad.id}}" style="color: #198754;">{{ad.title}}</a></li>
     {% endfor %}
 </ul>
 {% elif ads and request.method == "POST" %}

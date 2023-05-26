@@ -1,49 +1,111 @@
 {% extends "layout.html" %}
 
 {% block body %}
-
+<div>
 {% if ad %}
-<h4 class="text-center">{{ad.title}}</h4>
+<h4 class="text-center" style="text-transform:uppercase;">{{ad.title}}</h4>
 <hr>
-<table class="table table-hover">
-    <thead>
-        <tr>
-        <th scope="col">#</th>
-        <th scope="col">İlan Sahibi</th>
-        <th scope="col">Şehir</th>
-        <th scope="col">Marka</th>
-        <th scope="col">Model</th>
-        <th scope="col">Yıl</th>
-        <th scope="col">Fiyat</th>
-        <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-        
-        <tr>
-        <th scope="row"></th>
-        <td>{{ad.author}}</td>
-        <td>{{ad.city}}</td>
-        <td>{{ad.brand}}</td>
-        <td>{{ad.model}}</td>
-        <td>{{ad.year}}</td>
-        <td>{{ad.price}}</td>
-        <td><a href="/addfavorite/{{ad.id}}" class="btn btn-success">Favorilere Ekle</a></td>
-        </tr>
+
         
         <!--<tr>
         <th scope="row">3</th>
         <td colspan="2">Larry the Bird</td>
         <td>@twitter</td>
         </tr> -->
-    </tbody>
-    </table>
+
 <!--<hr>
 <div class="text-center">
 İlan Sahibi : {{ad.author}} <br>
 Oluşturma Tarihi : {{ad.created_date}}-->
-<hr>
-<div class="text-center">
+<style>
+    .div-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .div {
+        flex-basis: 50%;
+        box-sizing: border-box;
+        padding: 10px;
+        position: relative;
+    }
+    .image-container {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 66.66%; /* İmaj oranına göre ayarlayın */
+    }
+    .image-container img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .card {
+        width: 100%;
+        position: sticky;
+        top:10px; /* İstenilen yüksekliği ayarlayın */
+        height: 100%;
+    }
+    @media screen and (max-width:479px){
+        .div-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .div {
+        flex-basis: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        position: relative;
+    }
+    .image-container {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 66.66%; /* İmaj oranına göre ayarlayın */
+    }
+    .image-container img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .card {
+        width: 100%;
+        position: static;
+        top: auto; /* İstenilen yüksekliği ayarlayın */
+        height: fit-content;
+        margin-top:10px;
+    }   
+    }
+</style>
+
+<div class="div-container">
+    <div class="div">
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='uploads/delete-icon.png') }}" alt="Resim açıklaması">
+        </div>
+    </div>
+    <div class="div">
+        <div class="card">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><b>İlan Sahibi: </b>{{ad.author}}</li>
+                <li class="list-group-item"><b>Şehir: </b>{{ad.city}}</li>
+                <li class="list-group-item"><b>Marka: </b>{{ad.brand}}</li>
+                <li class="list-group-item"><b>Model: </b>{{ad.model}}</li>
+                <li class="list-group-item"><b>Yıl: </b>{{ad.year}}</li>
+                <li class="list-group-item"><b>Fiyat: </b>{{ad.price}}</li>
+                <li class="list-group-item text-center"><a href="/addfavorite/{{ad.id}}"> <button type="submit" class="btn btn-success">Favorilere Ekle</button></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+ <div class="jumbotron text-center">
 {{ad.context|safe}}
 </div>
 {% else %}
@@ -53,5 +115,6 @@ Oluşturma Tarihi : {{ad.created_date}}-->
 </div>
 
 {% endif %}
-
+</div>
 {% endblock  %}
+

@@ -3,25 +3,33 @@
 {% block body %}
 
 <div class="text-center">
-    <h3>Kullanıcı Bilgileriniz</h3>
-    <small>Hoşgeldin {{session["username"]}}</small>
-    <hr>
-    <p>Kullanıcı adınız: {{session["username"]}}</p>
-    <p>Adınız: {{session["name"]}}</p>
-    <p>Mail adresiniz: {{session["email"]}}</p>
-    <hr>
+    <h2>Hoş Geldin {{session["username"]}}</h2><br>
+<div class="div-container">
+    <div class="div">
+        <div class="card" style="border-radius:0px;">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><h3>Kullanıcı Bilgileriniz</h3></li>
+                <li class="list-group-item"><img src="{{ url_for('static', filename='uploads/indir.jpeg') }}" alt="Resim açıklaması" style="border-radius: 50%; max-width: 100px; height: auto; display: block; margin: 0 auto;"></li>
+                <li class="list-group-item"><b>Kullanıcı adınız: </b>{{session["username"]}}</li>
+                <li class="list-group-item"><b>Adınız: </b>{{session["name"]}}</li>
+                <li class="list-group-item"><b>Mail adresiniz: </b>{{session["email"]}}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<br>
 
     <h3>İlanlarınız</h3>
     {% if ads %}
-    <table class="table table-hover">
+    <table class="table table-hover table-striped align-middle" style=" border-left: 1px solid #c8cbcc; border-right: 1px solid #c8cbcc; border-bottom: 1px solid #c8cbcc;">
     <thead>
         <tr>
         
         <th scope="col">İlan No</th>
         <th scope="col">Başlık</th>
         <th scope="col">Oluşturma Tarihi</th>
-        <th scope="col"></th>
-        <th scope="col"></th>
+        <th scope="col">Düzenle</th>
+        <th scope="col">Sil</th>
         </tr>
     </thead>
     <tbody>
@@ -31,8 +39,8 @@
             <td><a href="/ad/{{ad.id}}">#{{ad.id}}</a></td>
             <td><a href="/ad/{{ad.id}}">{{ad.title}}</a></td>
             <td>{{ad.created_date}}</td>
-            <td><a href="/edit/{{ad.id}}" class="btn btn-danger">Güncelle</a></td>
-            <td><a href="/delete/{{ad.id}}" class="btn btn-danger">Sil</a></td>
+            <td><a href="/edit/{{ad.id}}" class="btn"><img src="static/uploads/update-icon.png" alt="Güncelle" style="height:30px; width:30px;"></a></td>
+            <td><a href="/delete/{{ad.id}}" class="btn"><img src="static/uploads/delete-icon.png" alt="Sil" style="height:30px; width:30px;"></a></td>
 
             </tr>
         {% endfor %}
@@ -46,10 +54,10 @@
     {% else %}
     <div class="alert alert-danger">Henüz ilanınız bulunmamaktadır.</div>
     {% endif %}
-    <hr> <br>
+     <br>
     <h3>Favori İlanlarınız</h3>
     {% if favorites %}
-    <table class="table table-hover">
+    <table class="table table-hover table-striped" style=" border-left: 1px solid #c8cbcc; border-right: 1px solid #c8cbcc; border-bottom: 1px solid #c8cbcc;">
     <thead>
         <tr>
         <th scope="col">İlan No</th>
@@ -63,7 +71,7 @@
         <th scope="col"></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody style="vertical-align: middle;">
         {% for ad in favorites %}
         <tr>
         <td><a href="/ad/{{ad.id}}">#{{ad.id}}</a></td>
@@ -74,7 +82,7 @@
         <td>{{ad.model}}</td>
         <td>{{ad.year}}</td>
         <td>{{ad.price}}</td>
-        <td><a href="/delfromfav/{{ad.id}}" class="btn btn-danger">Favorilerden Kaldır</a></td>
+        <td><a href="/delfromfav/{{ad.id}}" class="btn btn-danger" style="font-size:0.80rem;">Favorilerden Sil</a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -85,7 +93,7 @@
 
 
 
-    <hr>
+    
     <a href="/add" class="btn btn-success">İlan Ekleme</a>
 </div>
 {% endblock  %}
