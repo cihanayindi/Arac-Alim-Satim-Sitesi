@@ -2,10 +2,11 @@
 
 from flask import Flask, render_template, flash, redirect, url_for, session, logging, request,make_response
 from flask_mysqldb import MySQL
-from wtforms import Form, StringField, TextAreaField, FileField,PasswordField, IntegerField, validators
+from wtforms import Form, StringField, TextAreaField, FileField,PasswordField, IntegerField, validators, SelectField
 from passlib.hash import sha256_crypt
 from functools import wraps
 from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.secret_key = "aracalsat"
@@ -154,9 +155,16 @@ def add():
         year = form.year.data
         context = form.context.data
         price = form.price.data
-        images = form.images.data
-        print(images)
-
+        if form.image.data:
+            image_data = request.FILES[form.image.name].read()
+            open(os.path.join(UP))
+        # if images:
+        #     file = request.files['images']
+        #     filename = secure_filename(file.filename)
+        #     file_path = os.path.join(app.root_path, "upload_folder", filename)
+        #     filename.save(file_path)
+        # else:
+        #     file_path = None
         cursor = mysql.connection.cursor()
         sorgu = "INSERT INTO ads(author,author_id,title,city,brand,model,year,context,price) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sorgu,(session["name"],session["id"],title,city,brand,model,year,context,price))
@@ -171,13 +179,15 @@ def add():
 class AddEkleme(Form):
     title = StringField("İlan Başlığı",validators=[validators.Length(min=5,max=100)])
     city = StringField("Şehir")
-    brand = StringField("Marka")
+    brand = SelectField('Marka Seçin', choices=[
+        'BMW', 'Mercedes', 'Audi', 'Volkswagen', 'Toyota', 
+        'Honda', 'Ford', 'Chevrolet', 'Nissan', 'Hyundai'
+    ])
     model = StringField("Model")
     year = IntegerField("Yıl")
     context = TextAreaField("Açıklama")
     price = IntegerField("Fiyat")
-    images = FileField("Fotoğraf Ekleyin")
-    
+    images = FileField("Fotoğraf Ekleyin")    
 
 @app.route("/ads")
 def ads():

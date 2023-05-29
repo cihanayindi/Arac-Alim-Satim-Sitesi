@@ -3,16 +3,17 @@
 {% block body %}
 
 <div class="text-center">
-    <h2>Hoş Geldin {{session["username"]}}</h2><br>
+    <h2>Hoş geldin, {{session["username"]}}</h2><br>
 <div class="div-container">
     <div class="div">
         <div class="card" style="border-radius:0px;">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item"><h3>Kullanıcı Bilgileriniz</h3></li>
-                <li class="list-group-item"><img src="{{ url_for('static', filename='uploads/indir.jpeg') }}" alt="Resim açıklaması" style="border-radius: 50%; max-width: 100px; height: auto; display: block; margin: 0 auto;"></li>
+                <li class="list-group-item"><img src="{{ url_for('static', filename='uploads/profile-blank.png') }}" alt="Resim açıklaması" style="border-radius: 50%; max-width: 100px; height: auto; display: block; margin: 0 auto;"></li>
                 <li class="list-group-item"><b>Kullanıcı adınız: </b>{{session["username"]}}</li>
                 <li class="list-group-item"><b>Adınız: </b>{{session["name"]}}</li>
                 <li class="list-group-item"><b>Mail adresiniz: </b>{{session["email"]}}</li>
+                <li class="list-group-item"><a href="/add" class="btn btn-success">İlan Ekleme</a></li>
             </ul>
         </div>
     </div>
@@ -90,10 +91,5 @@
     {% else %}
     <div class="alert alert-danger">Henüz favori ilanınız bulunmamaktadır.</div>
     {% endif %}
-
-
-
-    
-    <a href="/add" class="btn btn-success">İlan Ekleme</a>
 </div>
 {% endblock  %}
