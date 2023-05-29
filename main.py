@@ -155,16 +155,6 @@ def add():
         year = form.year.data
         context = form.context.data
         price = form.price.data
-        if form.image.data:
-            image_data = request.FILES[form.image.name].read()
-            open(os.path.join(UP))
-        # if images:
-        #     file = request.files['images']
-        #     filename = secure_filename(file.filename)
-        #     file_path = os.path.join(app.root_path, "upload_folder", filename)
-        #     filename.save(file_path)
-        # else:
-        #     file_path = None
         cursor = mysql.connection.cursor()
         sorgu = "INSERT INTO ads(author,author_id,title,city,brand,model,year,context,price) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sorgu,(session["name"],session["id"],title,city,brand,model,year,context,price))
@@ -186,8 +176,7 @@ class AddEkleme(Form):
     model = StringField("Model")
     year = IntegerField("Yıl")
     context = TextAreaField("Açıklama")
-    price = IntegerField("Fiyat")
-    images = FileField("Fotoğraf Ekleyin")    
+    price = IntegerField("Fiyat")   
 
 @app.route("/ads")
 def ads():
